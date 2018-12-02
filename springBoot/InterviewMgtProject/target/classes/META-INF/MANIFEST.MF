@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: InterviewMgtProject
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: sylvio.brandon.david
+Implementation-Vendor-Id: com.accenture.interviewproj
+Build-Jdk: 1.8.0_161
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/InterviewMgtProject
+Created-By: Maven Integration for Eclipse
+

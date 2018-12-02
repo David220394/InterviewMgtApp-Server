@@ -1,0 +1,67 @@
+package com.accenture.interviewproj.config;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.accenture.interviewproj.batch.CustomProcessor;
+import com.accenture.interviewproj.batch.CustomReader;
+import com.accenture.interviewproj.batch.CustomWriter;
+import com.accenture.interviewproj.dtos.CandidateDto;
+
+@Configuration
+@EnableBatchProcessing
+public class BatchConfig {
+	
+	private final String path = "C:\\Users\\sylvio.brandon.david\\Desktop\\Candidates";
+	
+	@Autowired
+	public JobBuilderFactory jobBuilderFactory;
+
+	@Autowired
+	public StepBuilderFactory stepBuilderFactory;
+
+	@StepScope
+	@Bean
+	public ItemReader<Row> reader() {
+	    return new CustomReader(path);
+	}
+	
+	@StepScope
+	@Bean
+	public ItemProcessor<Row, CandidateDto> processor() {
+	    return new CustomProcessor(path);
+	}
+	
+	@StepScope
+	@Bean
+	public ItemWriter<CandidateDto> writer() {
+	    return new CustomWriter();
+	}
+	
+	@Bean
+	public Job importUserJob() {
+		return jobBuilderFactory.get("importUserJob").incrementer(new RunIdIncrementer())
+				.flow(step1()).end().build();
+	}
+
+	@Bean
+	public Step step1() {
+		return stepBuilderFactory.get("step1").<Row, CandidateDto>chunk(10).reader(reader()).processor(processor())
+				.writer(writer()).build();
+	}
+	
+	
+
+}
